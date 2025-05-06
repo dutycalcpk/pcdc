@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pakistan Customs Duty Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ece9e6, #ffffff);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            padding: 15px;
+        }
+
+        .sidebar {
+            width: 160px;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar.left { margin-right: 15px; }
+        .sidebar.right { margin-left: 15px; }
+
+        .sidebar a {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            text-decoration: none;
+        }
+
+        .sidebar img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .sidebar img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+            margin: 0 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a3c34;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-section, .result-section {
+            margin: 15px 0;
+        }
+
+        .input-section label {
+            display: block;
+            margin: 8px 0 3px;
+            font-weight: 500;
+            color: #1a3c34;
+            font-size: 0.9rem;
+        }
+
+        .input-section input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dfe6e9;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .input-section input:focus {
+            outline: none;
+            border-color: #00b4d8;
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+            background: #ffffff;
+        }
+
+        .input-section input:hover {
+            border-color: #00b4d8;
+        }
+
+        .input-section input::placeholder {
+            color: #a0b1b8;
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #e0e7e9;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(90deg, #00b4d8, #0077b6);
+            color: white;
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .total {
+            font-weight: 600;
+            font-size: 1rem;
+            background: #e6f3fa;
+        }
+
+        .rate-input {
+            width: 80px;
+            padding: 6px;
+            border: 1px solid #dfe6e9;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .rate-input:focus {
+            outline: none;
+            border-color: #00b4d8;
+            box-shadow: 0 0 6px rgba(0, 180, 216, 0.3);
+            background: #ffffff;
+        }
+
+        .rate-input:hover {
+            border-color: #00b4d8;
+        }
+
+        #totalTaxes {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #1a3c34;
+            font-weight: 500;
+        }
+
+        button {
+            padding: 10px 25px;
+            background: linear-gradient(90deg, #00b4d8, #0077b6);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 20px auto 0;
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #0077b6, #00b4d8);
+            box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
+        }
+
+        @media print {
+            .sidebar, button {
+                display: none;
+            }
+            .main-content {
+                margin: 0;
+                box-shadow: none;
+                width: 100%;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar left">
+            <a href="https://s.click.aliexpress.com/e/_okSCWY1" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/Aliexpress.jpeg" width="140" height="500" >
+            </a>
+            <a href="https://whatsapp.com/channel/0029Vb7fpOWLI8Yh6UPqIX2V" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/whatsapplogo.png" width="140" height="500">
+            </a>
+        </div>
+        <div class="main-content">
+            <h1>Pakistan Customs Duty Calculator</h1>
+            <div class="input-section">
+                <label for="goodsValue">Value of Goods (PKR):</label>
+                <input type="number" id="goodsValue" placeholder="Enter value" required>
+            </div>
+            <div class="result-section">
+                <table id="resultTable">
+                    <thead>
+                        <tr>
+                            <th>Taxes</th>
+                            <th>Rate (%)</th>
+                            <th>Amount (PKR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultBody">
+                        <tr><td>Customs Duty</td><td><input type="number" class="rate-input" id="customsDutyRate" step="0.01" placeholder="0.00"></td><td id="customsDutyAmount">0</td></tr>
+                        <tr><td>Additional Customs Duty</td><td><input type="number" class="rate-input" id="addCustomsDutyRate" step="0.01" placeholder="0.00"></td><td id="addCustomsDutyAmount">0</td></tr>
+                        <tr><td>Regulatory Duty</td><td><input type="number" class="rate-input" id="regulatoryDutyRate" step="0.01" placeholder="0.00"></td><td id="regulatoryDutyAmount">0</td></tr>
+                        <tr><td>Sales Tax</td><td><input type="number" class="rate-input" id="salesTaxRate" step="0.01" placeholder="0.00"></td><td id="salesTaxAmount">0</td></tr>
+                        <tr><td>Additional Sales Tax</td><td><input type="number" class="rate-input" id="addSalesTaxRate" step="0.01" placeholder="0.00"></td><td id="addSalesTaxAmount">0</td></tr>
+                        <tr><td>Income Tax</td><td><input type="number" class="rate-input" id="incomeTaxRate" step="0.01" placeholder="0.00"></td><td id="incomeTaxAmount">0</td></tr>
+                        <tr class="total"><td>Total Duty & Taxes</td><td id="totalTaxRate">0.0000 </td><td id="totalTaxAmount">0</td></tr>
+                    </tbody>
+                </table>
+                <div id="totalTaxes"></div>
+            </div>
+            <button onclick="window.print()">Print</button>
+
+   <a href="https://accounts.binance.com/register?ref=79621156" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/binance.png" width="200" height="150" >
+            </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+ <a href="https://url.hk/i/en/qmgww" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/redotpay.png" width="200" height="150" >
+            </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+ <a href="https://nowpayments.io/donation?api_key=XJMZ5ZJ-YHK4B51-H6S2K1A-2YN5FVX" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/donate.png" width="250" height="80" >
+            </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+   <a href="https://okx.com/join/9556776" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/OKX.png" width="100" height="60" >
+            </a>
+
+        </div>
+        <div class="sidebar right">
+            <a href="https://dutycalc.blogspot.com/p/av-dv-difference-duty-calculator.html" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/AVDV.png" width="140" height="500">
+            </a>
+            <a href="https://url.hk/i/en/qmgww" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/140x500%20redotpay.jpg" width="140" height="500" >
+            </a>
+        </div>
+    </div>
+    <script>
+        function calculateDuties() {
+            const goodsValue = parseFloat(document.getElementById('goodsValue').value) || 0;
+            const customsDutyRate = parseFloat(document.getElementById('customsDutyRate').value) || 0;
+            const addCustomsDutyRate = parseFloat(document.getElementById('addCustomsDutyRate').value) || 0;
+            const regulatoryDutyRate = parseFloat(document.getElementById('regulatoryDutyRate').value) || 0;
+            const salesTaxRate = parseFloat(document.getElementById('salesTaxRate').value) || 0;
+            const addSalesTaxRate = parseFloat(document.getElementById('addSalesTaxRate').value) || 0;
+            const incomeTaxRate = parseFloat(document.getElementById('incomeTaxRate').value) || 0;
+
+            const customsDuty = Math.round(goodsValue * (customsDutyRate / 100));
+            const addCustomsDuty = Math.round(goodsValue * (addCustomsDutyRate / 100));
+            const regulatoryDuty = Math.round(goodsValue * (regulatoryDutyRate / 100));
+            const taxableValue = goodsValue + customsDuty + addCustomsDuty + regulatoryDuty;
+            const salesTax = Math.round(taxableValue * (salesTaxRate / 100));
+            const addSalesTax = Math.round(taxableValue * (addSalesTaxRate / 100));
+            const incomeTaxableValue = taxableValue + salesTax + addSalesTax;
+            const incomeTax = Math.round(incomeTaxableValue * (incomeTaxRate / 100));
+
+            const totalTaxesAmount = customsDuty + addCustomsDuty + regulatoryDuty + salesTax + addSalesTax + incomeTax;
+            const totalTaxesPercentage = goodsValue ? ((totalTaxesAmount / goodsValue) * 100).toFixed(4) : '0.0000';
+
+            document.getElementById('customsDutyAmount').textContent = customsDuty;
+            document.getElementById('addCustomsDutyAmount').textContent = addCustomsDuty;
+            document.getElementById('regulatoryDutyAmount').textContent = regulatoryDuty;
+            document.getElementById('salesTaxAmount').textContent = salesTax;
+            document.getElementById('addSalesTaxAmount').textContent = addSalesTax;
+            document.getElementById('incomeTaxAmount').textContent = incomeTax;
+            document.getElementById('totalTaxRate').textContent = totalTaxesPercentage;
+            document.getElementById('totalTaxAmount').textContent = totalTaxesAmount;
+
+            document.getElementById('totalTaxes').innerHTML = `
+                <p>Total Taxes Percentage: ${totalTaxesPercentage}%</p>
+                <p>Total Taxes Amount (Excluding Goods Value): ${totalTaxesAmount} PKR</p>
+            `;
+        }
+
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', calculateDuties);
+        });
+    </script>
+
+
+</body>
+</html>
