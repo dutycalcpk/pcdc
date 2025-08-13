@@ -1,0 +1,336 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST on Retail Price Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff, #c3dafe);
+            color: #2d3748;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #2b6cb0;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.2);
+        }
+        button {
+            grid-column: span 2;
+            padding: 12px;
+            background: #2b6cb0;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2c5282;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .popup-header h2 {
+            margin: 0;
+            color: #2b6cb0;
+            font-size: 20px;
+        }
+        .close-btn {
+            background: #e53e3e;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .close-btn:hover {
+            background: #c53030;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        th {
+            background: #2b6cb0;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f7fafc;
+        }
+        .highlight {
+            font-weight: 600;
+            color: #c53030;
+        }
+        .positive {
+            color: #2f855a;
+        }
+        @media (max-width: 480px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+            button {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GST on Retail Price Calculator</h1>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="value">Value in PKR:</label>
+                <input type="number" id="value" value="1000" min="0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="cd_rate">Customs Duty Rate (%):</label>
+                <input type="number" id="cd_rate" value="20" min="0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="acd_rate">Additional CD Rate (%):</label>
+                <input type="number" id="acd_rate" value="4" min="0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="reg_rate">Regulatory Duty Rate (%):</label>
+                <input type="number" id="reg_rate" value="10" min="0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="fed_rate">Fed. Excise Duty Rate (%):</label>
+                <input type="number" id="fed_rate" value="10" min="0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="st_rate">Sales Tax Rate (%):</label>
+                <input type="number" id="st_rate" value="25" min="0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="ast_rate">AST Rate (%):</label>
+                <input type="number" id="ast_rate" value="0" min="0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="it_rate">Income Tax Rate (%):</label>
+                <input type="number" id="it_rate" value="6" min="0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="gst_retail_rate">GST on Retail Price Rate (%):</label>
+                <input type="number" id="gst_retail_rate" value="25" min="0" step="0.1">
+            </div>
+            <button onclick="calculate()">Calculate</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <div class="popup-header">
+            <h2>Calculation Results</h2>
+            <button class="close-btn" onclick="closePopup()">Close</button>
+        </div>
+        <table id="results">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Rate (%)</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        function calculate() {
+            const V = parseFloat(document.getElementById('value').value);
+            const CD_rate = parseFloat(document.getElementById('cd_rate').value) / 100;
+            const ACD_rate = parseFloat(document.getElementById('acd_rate').value) / 100;
+            const Reg_rate = parseFloat(document.getElementById('reg_rate').value) / 100;
+            const FED_rate = parseFloat(document.getElementById('fed_rate').value) / 100;
+            const ST_rate = parseFloat(document.getElementById('st_rate').value) / 100;
+            const AST_rate = parseFloat(document.getElementById('ast_rate').value) / 100;
+            const IT_rate = parseFloat(document.getElementById('it_rate').value) / 100;
+            const GST_retail_rate = parseFloat(document.getElementById('gst_retail_rate').value) / 100;
+
+            if (isNaN(V) || V <= 0 || isNaN(CD_rate) || isNaN(ACD_rate) || isNaN(Reg_rate) || 
+                isNaN(FED_rate) || isNaN(ST_rate) || isNaN(AST_rate) || isNaN(IT_rate) || isNaN(GST_retail_rate)) {
+                alert('Please enter valid positive values for all fields.');
+                return;
+            }
+
+            // Calculations
+            const CD = CD_rate * V;
+            const ACD = ACD_rate * V;
+            const Reg = Reg_rate * V;
+            const FED = FED_rate * (V + CD);
+            const Base_ST = V + CD + ACD + Reg + FED;
+            const ST = ST_rate * Base_ST;
+            const AST = AST_rate * Base_ST;
+            const Base_IT = Base_ST + ST + AST;
+            const IT = IT_rate * Base_IT;
+            const Total_duties = CD + ACD + Reg + FED + ST + AST + IT;
+            const A = V + Total_duties;
+            const B = A * 1.3; // 130% of A
+            const C = GST_retail_rate * B;
+            const E = ST + AST;
+            const D = C - E;
+
+            // Display results in popup
+            const tbody = document.querySelector('#results tbody');
+            tbody.innerHTML = ''; // Clear previous results
+
+            const rows = [
+                { desc: 'Customs Duty', rate: (CD_rate * 100).toFixed(1), amount: CD.toFixed(2) },
+                { desc: 'Additional CD', rate: (ACD_rate * 100).toFixed(1), amount: ACD.toFixed(2) },
+                { desc: 'Regulatory Duty', rate: (Reg_rate * 100).toFixed(1), amount: Reg.toFixed(2) },
+                { desc: 'Fed. Excise Duty', rate: (FED_rate * 100).toFixed(1), amount: FED.toFixed(2) },
+                { desc: 'Sales Tax', rate: (ST_rate * 100).toFixed(1), amount: ST.toFixed(2) },
+                { desc: 'AST (Exm. 12th Sch.)', rate: (AST_rate * 100).toFixed(1), amount: AST.toFixed(2) },
+                { desc: 'Income Tax', rate: (IT_rate * 100).toFixed(1), amount: IT.toFixed(2) },
+                { desc: 'Total Duty & Taxes', rate: '', amount: Total_duties.toFixed(2), class: 'highlight' },
+                { desc: 'A: Value of GST (Value + Duty Taxes)', rate: '', amount: A.toFixed(2) },
+                { desc: 'B: Minimum MRP (130% of A)', rate: '', amount: B.toFixed(2) },
+                { desc: 'C: GST on Retail Price', rate: (GST_retail_rate * 100).toFixed(1), amount: C.toFixed(4) },
+                { desc: 'D: GST Payable (C - E)', rate: '', amount: D.toFixed(4), class: 'positive highlight' },
+                { desc: 'E: System Calc. ST + AST', rate: '', amount: E.toFixed(2) }
+            ];
+
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.desc}</td>
+                    <td>${row.rate}</td>
+                    <td class="${row.class || ''}">${row.amount}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
