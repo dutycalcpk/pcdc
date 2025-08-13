@@ -42,7 +42,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GST on Retail Price Calculator</title>
+    <title>GST on Retail Price Calculator with Ad Bars</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -54,6 +54,9 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding-left: 120px; /* Space for left sidebar */
+            padding-right: 120px; /* Space for right sidebar */
+            padding-bottom: 60px; /* Space for bottom bar */
         }
         .container {
             background: #ffffff;
@@ -126,6 +129,13 @@
         .clear-btn:hover {
             background: #c53030;
         }
+        .feedback-message {
+            text-align: center;
+            color: #2f855a;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
         .popup {
             display: none;
             position: fixed;
@@ -158,13 +168,13 @@
             color: #ffffff;
             border: 1px solid #ffffff;
             border-radius: 4px;
-            padding: 6px 2px;
+            padding: 2px 4px; /* Reduced size */
             cursor: pointer;
-            font-size: 14px;
+            font-size: 8px; /* Reduced font size */
         }
         .close-btn:hover {
             background: #c53030;
-
+            border: 1px solid #f0f0f0;
         }
         .overlay {
             display: none;
@@ -201,6 +211,83 @@
         .positive {
             color: #2f855a;
         }
+        /* Sidebar Styles */
+        .sidebar-left, .sidebar-right {
+            position: fixed;
+            top: 0;
+            width: 100px;
+            height: 100%;
+            background: #f1f1f1;
+            padding: 20px 10px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 998;
+            overflow-y: auto;
+        }
+        .sidebar-left {
+            left: 0;
+        }
+        .sidebar-right {
+            right: 0;
+        }
+        .sidebar-left a, .sidebar-right a {
+            display: block;
+            color: #2b6cb0;
+            text-decoration: none;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+            background: #ffffff;
+            transition: background 0.3s;
+        }
+        .sidebar-left a:hover, .sidebar-right a:hover {
+            background: #e0e7ff;
+        }
+        /* Bottom Bar Styles */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #f1f1f1;
+            padding: 10px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 998;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .bottom-bar a {
+            color: #2b6cb0;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #ffffff;
+            transition: background 0.3s;
+        }
+        .bottom-bar a:hover {
+            background: #e0e7ff;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .sidebar-left, .sidebar-right {
+                display: none; /* Hide sidebars on mobile */
+            }
+            .bottom-bar {
+                flex-direction: column;
+                align-items: center;
+                padding: 8px;
+            }
+            .bottom-bar a {
+                width: 100%;
+                text-align: center;
+            }
+        }
         @media (max-width: 480px) {
             .input-grid {
                 grid-template-columns: 1fr;
@@ -213,9 +300,33 @@
     </style>
 </head>
 <body>
+    <!-- Left Sidebar for Ads -->
+    <div class="sidebar-left">
+         <a href="https://accounts.binance.com/register?ref=79621156" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/binance.png" width="50" height="50" >
+            </a>
+        <a href="https://url.hk/i/en/qmgww" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/redotpay.png" width="100" height="150" >
+            </a>
+        <a href="https://nowpayments.io/donation?api_key=XJMZ5ZJ-YHK4B51-H6S2K1A-2YN5FVX" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/donate.png" width="85" height="50" >
+            </a> 
+    </div>
+
+    <!-- Right Sidebar for Ads -->
+    <div class="sidebar-right">
+           <a href="https://okx.com/join/9556776" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/OKX.png" width="50" height="50" >
+            </a>
+            <a href="https://s.click.aliexpress.com/e/_okSCWY1" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/Aliexpress.jpeg" width="100" height="150" >
+            </a>
+           <a href="https://dutycalc.blogspot.com/p/av-dv-difference-duty-calculator.html" target="_blank">
+                <img src="https://raw.githubusercontent.com/dutycalcpk/pcdc/refs/heads/main/AVDV.png" width="100" height="150">
+            </a>
+    </div>
+
     <div class="container">
-            <a href="https://dutycalcpk.github.io/pcdc/pcdc.html" target="_blank" class="text-white hover:text-indigo-800 font-bold"> Home </a> &nbsp &nbsp
-<a href="https://dutycalcpk.github.io/pcdc/pcdconline.html" target="_blank" class="text-white hover:text-indigo-800 font-bold"> Online Duty Calculator </a>
         <h1>GST on Retail Price Calculator</h1>
         <div class="input-grid">
             <div class="input-group">
@@ -255,17 +366,26 @@
                 <input type="number" id="gst_retail_rate" value="" min="0" step="0.1">
             </div>
             <div class="button-group">
-                <button class="calculate-btn" onclick="calculate()">Calculate</button>
-                <button class="clear-btn" onclick="clearInputs()">Clear</button>
+                <button class="calculate-btn" id="calculate-btn">Calculate</button>
+                <button class="clear-btn" id="clear-btn">Clear</button>
             </div>
+            <div class="feedback-message" id="feedback-message">Inputs cleared</div>
         </div>
+    </div>
+
+    <!-- Bottom Bar for Ads -->
+    <div class="bottom-bar">
+        
+	<a href="https://dutycalcpk.github.io/pcdc/pcdc.html" target="_blank" class="text-white hover:text-indigo-800 font-bold"> Home </a>
+        <a href="https://dutycalcpk.github.io/pcdc/pcdconline.html" target="_blank" class="text-white hover:text-indigo-800 font-bold"> Online Duty Calculator </a>
+        <a href="https://microsoftedge.microsoft.com/addons/detail/pakistan-customs-duty-cal/eenhofecgmggiamdpdfepfckoanpldll" target="_blank" class="text-white hover:text-indigo-800 font-bold"> Edge Browser Extension </a>
     </div>
 
     <div class="overlay" id="overlay"></div>
     <div class="popup" id="popup">
         <div class="popup-header">
             <h2>Calculation Results</h2>
-            <button class="close-btn" onclick="closePopup()">Close</button>
+            <button class="close-btn" id="close-btn">Close</button>
         </div>
         <table id="results">
             <thead>
@@ -280,6 +400,11 @@
     </div>
 
     <script>
+        // Event listeners
+        document.getElementById('calculate-btn').addEventListener('click', calculate);
+        document.getElementById('clear-btn').addEventListener('click', clearInputs);
+        document.getElementById('close-btn').addEventListener('click', closePopup);
+
         function calculate() {
             const V = parseFloat(document.getElementById('value').value);
             const CD_rate = parseFloat(document.getElementById('cd_rate').value) / 100;
@@ -346,26 +471,55 @@
 
             document.getElementById('popup').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
+            document.getElementById('feedback-message').style.display = 'none'; // Hide feedback message
         }
 
         function clearInputs() {
-            document.getElementById('value').value = '0';
-            document.getElementById('cd_rate').value = '0';
-            document.getElementById('acd_rate').value = '0';
-            document.getElementById('reg_rate').value = '0';
-            document.getElementById('fed_rate').value = '0';
-            document.getElementById('st_rate').value = '0';
-            document.getElementById('ast_rate').value = '0';
-            document.getElementById('it_rate').value = '0';
-            document.getElementById('gst_retail_rate').value = '0';
-            document.getElementById('popup').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-            document.querySelector('#results tbody').innerHTML = '';
+            console.log('Clear button clicked'); // Debugging log
+            // Reset all input fields to their default values
+            const defaultValues = {
+                'value': ' ',
+                'cd_rate': ' ',
+                'acd_rate': ' ',
+                'reg_rate': ' ',
+                'fed_rate': ' ',
+                'st_rate': ' ',
+                'ast_rate': ' ',
+                'it_rate': ' ',
+                'gst_retail_rate': ' '
+            };
+            const inputs = document.querySelectorAll('.input-grid input[type="number"]');
+            inputs.forEach(input => {
+                const id = input.id;
+                if (defaultValues[id]) {
+                    input.value = defaultValues[id];
+                } else {
+                    console.error(`No default value for input ID: ${id}`);
+                }
+            });
+
+            // Close the popup and clear the results table
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const tbody = document.querySelector('#results tbody');
+            if (popup) popup.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            if (tbody) tbody.innerHTML = '';
+
+            // Show feedback message briefly
+            const feedbackMessage = document.getElementById('feedback-message');
+            feedbackMessage.style.display = 'block';
+            setTimeout(() => {
+                feedbackMessage.style.display = 'none';
+            }, 2000); // Hide after 2 seconds
         }
 
         function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            if (popup) popup.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+            document.getElementById('feedback-message').style.display = 'none'; // Hide feedback message
         }
     </script>
 </body>
