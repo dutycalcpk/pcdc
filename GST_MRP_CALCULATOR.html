@@ -374,6 +374,10 @@
                 <button class="clear-btn" id="clear-btn">Clear</button>
             </div>
             <div class="feedback-message" id="feedback-message">Inputs cleared</div>
+			<div>
+<a href="https://dutycalcpk.github.io/pcdc/pcdc.html" target="_blank" class="text-white hover:text-indigo-800 font-bold"> Home </a> &nbsp;&nbsp;
+        <a href="https://dutycalcpk.github.io/pcdc/pcdconline.html" target="_blank" class="text-white hover:text-indigo-800 font-bold"> Online Duty Calculator </a> &nbsp;&nbsp;
+        <a href="https://microsoftedge.microsoft.com/addons/detail/pakistan-customs-duty-cal/eenhofecgmggiamdpdfepfckoanpldll" target="_blank" class="text-white hover:text-indigo-800 font-bold"> Edge Extension </a> </div>
         </div>
     </div>
 
@@ -415,7 +419,7 @@
 
             if (isNaN(V) || V <= 0 || isNaN(CD_rate) || isNaN(ACD_rate) || isNaN(Reg_rate) || 
                 isNaN(FED_rate) || isNaN(ST_rate) || isNaN(AST_rate) || isNaN(IT_rate) || isNaN(GST_retail_rate)) {
-                alert('Please enter valid positive values for all fields.');
+                alert('Please enter valid positive values for all fields. Ex: 0, 15, 18');
                 return;
             }
 
