@@ -435,7 +435,7 @@
             const Base_IT = Base_ST + ST + AST;
             const IT = IT_rate * Base_IT;
             const Total_duties = CD + ACD + Reg + FED + ST + AST + IT;
-            const A = V + Total_duties;
+            const A = (V + Total_duties) - (ST + AST);
             const B = A * 1.3; // 130% of A
             const C = GST_retail_rate * B;
             const E = ST + AST;
